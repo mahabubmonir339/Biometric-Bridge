@@ -2,317 +2,232 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Attendance</title>
-    <!-- PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+<meta charset="UTF-8">
+<title>Retail Solution Attendance</title>
 
-    <!-- Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 20px;
-        }
+<!-- Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-        h2 {
-            text-align: center;
-            color: #333;
-        }
+<style>
+body { font-family: Arial; background:#f4f4f9; margin:20px; }
+h2 { text-align:center; }
 
-        /* TABS */
-        .tabs {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
+.tabs { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; margin-bottom:15px; }
+.tab { padding:8px 15px; background:#ddd; border-radius:20px; cursor:pointer; font-weight:bold; }
+.tab.active { background:#007BFF; color:#fff; }
 
-        .tab {
-            padding: 8px 15px;
-            background: #ddd;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+table { width:90%; margin:auto; border-collapse:collapse; background:#fff; }
+th,td { padding:10px; border:1px solid #ddd; text-align:center; }
+th { background:#007BFF; color:white; }
+tr:nth-child(even){ background:#f9f9f9; }
 
-        .tab.active {
-            background: #007BFF;
-            color: #fff;
-        }
-
-        table {
-            width: 80%;
-            margin: auto;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        th,
-        td {
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-
-        th {
-            background-color: #007BFF;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .in {
-            color: green;
-            font-weight: bold;
-        }
-
-        .out {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+.in { color:green; font-weight:bold; }
+.out { color:red; font-weight:bold; }
+</style>
 </head>
 
 <body>
 
-    <h2>Retail Solution Attendance Logs</h2>
-    <div style="text-align:center; margin-bottom:15px;">
-        <button onclick="downloadPDF()">Download PDF</button>
-        <button onclick="downloadExcel()">Download Excel</button>
-    </div>
+<h2>Retail Solution Attendance Logs</h2>
 
-    <!-- USER TABS -->
-    <div class="tabs" id="userTabs"></div>
+<div style="text-align:center;margin-bottom:15px;">
+<select id="monthSelect" onchange="renderTable()">
+<option value="all">All Months</option>
+<option value="1">January</option><option value="2">February</option>
+<option value="3">March</option><option value="4">April</option>
+<option value="5">May</option><option value="6">June</option>
+<option value="7">July</option><option value="8">August</option>
+<option value="9">September</option><option value="10">October</option>
+<option value="11">November</option><option value="12">December</option>
+</select>
 
-    <table id="attendance-table">
-        <thead>
-            <tr>
-                <th>UID</th>
-                <th>Name</th>
-                <th>Time</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td colspan="4">Loading...</td>
-            </tr>
-        </tbody>
-    </table>
+<button onclick="downloadPDF()">Download PDF</button>
+<button onclick="downloadExcel()">Download Excel</button>
+</div>
 
-    <script>
-        /* USER LIST */
-        const userMap = {
-            "1": "MR Shuvo",
-            "2": "MR Faruque",
-            "3": "MR Fahim",
-            "4": "MR Monir",
-            "5": "MR Saiful",
-            "6": "MRS Israt",
-            "7": "Mrs Tonni"
-        };
+<div class="tabs" id="userTabs"></div>
 
-        let allData = [];
-        let activeUser = "all";
+<table id="attendance-table">
+<thead>
+<tr>
+<th>UID</th>
+<th>Name</th>
+<th>Date</th>
+<th>Check-in</th>
+<th>Check-out</th>
+</tr>
+</thead>
+<tbody><tr><td colspan="5">Loading...</td></tr></tbody>
+</table>
 
-        /* STATUS BY TIME */
-        function getStatusByTime(timeString) {
-            const time = new Date(timeString);
-            const hour = time.getHours();
+<script>
+/* USERS */
+const userMap = {
+ "1":"MR Shuvo","2":"MR Faruque","3":"MR Fahim","4":"MR Monir",
+ "5":"MD Saiful","6":"MRS Israt","7":"Mrs Tonni","8":"MD Asif Imtiaz"
+};
 
-            if (hour >= 13) {
-                return { text: "Check-out", class: "out" };
-            } else {
-                return { text: "Check-in", class: "in" };
-            }
-        }
+let rawData = [];
+let processedData = [];
+let activeUser = "all";
 
-        /* LOAD JSON */
-        async function loadJSON() {
-            try {
-                const res = await fetch('attendance.json');
-                allData = await res.json();
-                renderTable();
-            } catch (err) {
-                document.querySelector('#attendance-table tbody').innerHTML =
-                    `<tr><td colspan="4">Error loading JSON</td></tr>`;
-                console.error(err);
-            }
-        }
+/* TIME FORMAT */
+function formatTime(t){
+ return new Date(t).toLocaleString('en-US',{
+  hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true
+ });
+}
 
-        /* CREATE TABS */
-        function createTabs() {
-            const tabsDiv = document.getElementById('userTabs');
-            tabsDiv.innerHTML = '';
+/* Month Name Helper */
+function getMonthName(monthValue){
+ const months = ["January","February","March","April","May","June",
+                 "July","August","September","October","November","December"];
+ if(monthValue==="all") return "All_Months";
+ return months[parseInt(monthValue)-1];
+}
 
-            // All tab
-            tabsDiv.innerHTML += `
-        <div class="tab active" onclick="switchUser('all')">All</div>
-    `;
+/* GROUP SAME DATE + CHECK-IN/CHECK-OUT LOGIC */
+function processAttendance(data){
+ const map = {};
+ data.forEach(item=>{
+  const d = new Date(item.time);
+  const date = d.toISOString().split("T")[0];
+  const key = item.user_id+"_"+date;
 
-            for (const id in userMap) {
-                tabsDiv.innerHTML += `
-            <div class="tab" onclick="switchUser('${id}')">
-                ${userMap[id]}
-            </div>
-        `;
-            }
-        }
+  if(!map[key]){
+   map[key]={ uid:item.uid,user_id:item.user_id,date,checkIn:null,checkOut:null };
+  }
 
-        /* SWITCH USER */
-        function switchUser(userId) {
-            activeUser = userId;
+  // 2PM rule
+  if(d.getHours()<14 && !map[key].checkIn){
+   map[key].checkIn = item.time;
+  }
+  if(d.getHours()>=14){
+   map[key].checkOut = item.time;
+  }
+ });
+ return Object.values(map).sort((a,b)=>new Date(b.date)-new Date(a.date));
+}
 
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
+/* LOAD JSON */
+async function loadJSON(){
+ const res = await fetch('attendance.json');
+ rawData = await res.json();
+ processedData = processAttendance(rawData);
+ renderTable();
+}
 
-            renderTable();
-        }
+/* CREATE TABS */
+function createTabs(){
+ const div=document.getElementById('userTabs');
+ div.innerHTML=`<div class="tab active" onclick="switchUser('all',this)">All</div>`;
+ for(const id in userMap){
+  div.innerHTML+=`<div class="tab" onclick="switchUser('${id}',this)">${userMap[id]}</div>`;
+ }
+}
+function switchUser(id,el){
+ activeUser=id;
+ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+ el.classList.add('active');
+ renderTable();
+}
 
-        /* RENDER TABLE */
-        function renderTable() {
-            const tbody = document.querySelector('#attendance-table tbody');
-            tbody.innerHTML = '';
+/* FILTER DATA */
+function getFiltered(){
+ let d=processedData;
+ if(activeUser!=="all") d=d.filter(x=>x.user_id===activeUser);
+ const m=document.getElementById('monthSelect').value;
+ if(m!=="all") d=d.filter(x=>new Date(x.date).getMonth()+1==m);
+ return d;
+}
 
-            let data = allData;
-            if (activeUser !== "all") {
-                data = allData.filter(item => item.user_id === activeUser);
-            }
+/* RENDER TABLE */
+function renderTable(){
+ const tb=document.querySelector("tbody");
+ const data=getFiltered();
+ tb.innerHTML="";
+ if(!data.length){ tb.innerHTML=`<tr><td colspan="5">No data</td></tr>`; return;}
+ data.forEach(r=>{
+ tb.innerHTML+=`
+ <tr>
+ <td>${r.uid}</td>
+ <td>${userMap[r.user_id]}</td>
+ <td>${r.date}</td>
+ <td class="in">${r.checkIn?formatTime(r.checkIn):"--"}</td>
+ <td class="out">${r.checkOut?formatTime(r.checkOut):"--"}</td>
+ </tr>`;
+ });
+}
 
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4">No records found</td></tr>`;
-                return;
-            }
+/* ================= PDF DOWNLOAD ================= */
+function downloadPDF(){
+ const data=getFiltered();
+ if(!data.length){ alert("No data to export"); return;}
 
-            data.forEach(item => {
-                const time = new Date(item.time);
-                const formattedTime = time.toLocaleString('en-US', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: true
-                });
+ const {jsPDF}=window.jspdf;
+ const doc=new jsPDF();
 
-                const status = getStatusByTime(item.time);
+ const monthValue=document.getElementById("monthSelect").value;
+ const monthName=getMonthName(monthValue);
+ const title=activeUser==="all"
+             ? `All Users Attendance (${monthName})`
+             : `${userMap[activeUser]} Attendance (${monthName})`;
+ doc.text(title,14,15);
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-            <td>${item.uid}</td>
-            <td>${userMap[item.user_id] || 'Unknown'}</td>
-            <td>${formattedTime}</td>
-            <td class="${status.class}">${status.text}</td>
-        `;
-                tbody.appendChild(tr);
-            });
-        }
+ const rows = data.map(r=>[
+  r.uid,
+  userMap[r.user_id],
+  r.date,
+  r.checkIn?formatTime(r.checkIn):"--",
+  r.checkOut?formatTime(r.checkOut):"--"
+ ]);
 
+ doc.autoTable({
+  head:[['UID','Name','Date','Check-in','Check-out']],
+  body:rows,
+  startY:20
+ });
 
+ const fileName = (activeUser==="all"?"All_Users":userMap[activeUser])
+                  + "_" + monthName + "_Attendance.pdf";
 
-        /* GET FILTERED DATA (TAB WISE) */
-        function getFilteredData() {
-            if (activeUser === "all") return allData;
-            return allData.filter(item => item.user_id === activeUser);
-        }
+ doc.save(fileName.replaceAll(" ","_"));
+}
 
-        /* FORMAT TIME FOR EXPORT */
-        function formatTime(timeString) {
-            return new Date(timeString).toLocaleString('en-US', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
-            });
-        }
+/* ================= EXCEL DOWNLOAD ================= */
+function downloadExcel(){
+ const data=getFiltered();
+ if(!data.length){ alert("No data to export"); return;}
 
-        /* ================= PDF DOWNLOAD ================= */
-        function downloadPDF() {
-            const data = getFilteredData();
-            if (data.length === 0) {
-                alert("No data to export");
-                return;
-            }
+ const monthValue=document.getElementById("monthSelect").value;
+ const monthName=getMonthName(monthValue);
+ const fileName = (activeUser==="all"?"All_Users":userMap[activeUser])
+                  + "_" + monthName + "_Attendance.xlsx";
 
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+ const excelData = data.map(r=>({
+  UID:r.uid,
+  Name:userMap[r.user_id],
+  Date:r.date,
+  "Check-in":r.checkIn?formatTime(r.checkIn):"--",
+  "Check-out":r.checkOut?formatTime(r.checkOut):"--"
+ }));
 
-            const title = activeUser === "all"
-                ? "All Users Attendance"
-                : userMap[activeUser] + " Attendance";
+ const ws=XLSX.utils.json_to_sheet(excelData);
+ const wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,ws,"Attendance");
+ XLSX.writeFile(wb,fileName.replaceAll(" ","_"));
+}
 
-            doc.text(title, 14, 15);
+/* INIT */
+createTabs();
+loadJSON();
+setInterval(loadJSON,5000);
 
-            const tableData = data.map(item => {
-                return [
-                    item.uid,
-                    userMap[item.user_id],
-                    formatTime(item.time),
-                    getStatusByTime(item.time).text
-                ];
-            });
-
-            doc.autoTable({
-                head: [['UID', 'Name', 'Time', 'Status']],
-                body: tableData,
-                startY: 20
-            });
-
-            doc.save(title.replaceAll(" ", "_") + ".pdf");
-        }
-
-        /* ================= EXCEL DOWNLOAD ================= */
-        function downloadExcel() {
-            const data = getFilteredData();
-            if (data.length === 0) {
-                alert("No data to export");
-                return;
-            }
-
-            const excelData = data.map(item => ({
-                UID: item.uid,
-                Name: userMap[item.user_id],
-                Time: formatTime(item.time),
-                Status: getStatusByTime(item.time).text
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(excelData);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
-
-            const fileName = activeUser === "all"
-                ? "All_Users_Attendance.xlsx"
-                : userMap[activeUser].replaceAll(" ", "_") + "_Attendance.xlsx";
-
-            XLSX.writeFile(workbook, fileName);
-        }
-
-
-
-        /* INIT */
-        createTabs();
-        loadJSON();
-        setInterval(loadJSON, 5000);
-    </script>
+</script>
 
 </body>
-
 </html>
