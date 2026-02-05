@@ -57,18 +57,19 @@ tr:nth-child(even){ background:#f9f9f9; }
 <th>UID</th>
 <th>Name</th>
 <th>Date</th>
+<th>Day</th>
 <th>Check-in</th>
 <th>Check-out</th>
 </tr>
 </thead>
-<tbody><tr><td colspan="5">Loading...</td></tr></tbody>
+<tbody><tr><td colspan="6">Loading...</td></tr></tbody>
 </table>
 
 <script>
 /* USERS */
 const userMap = {
- "1":"MR Shuvo","2":"MR Faruque","3":"MR Fahim","4":"MR Monir",
- "5":"MD Saiful","6":"MRS Israt","7":"Mrs Tonni","8":"MD Asif Imtiaz"
+ "1":"MR Shuvo","2":"MD Omar Faruqe","3":"MR Fahim","4":"Mahabub Hossen Monir",
+ "5":"MD Saiful","6":"Israt Jahan","7":"Afrina Tonni","8":"MD Asif Imtiaz"
 };
 
 let rawData = [];
@@ -82,12 +83,19 @@ function formatTime(t){
  });
 }
 
-/* Month Name Helper */
+/* MONTH NAME */
 function getMonthName(monthValue){
  const months = ["January","February","March","April","May","June",
                  "July","August","September","October","November","December"];
  if(monthValue==="all") return "All_Months";
  return months[parseInt(monthValue)-1];
+}
+
+/* DAY NAME */
+function getDayName(dateString){
+ const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+ const d = new Date(dateString);
+ return days[d.getDay()];
 }
 
 /* GROUP SAME DATE + CHECK-IN/CHECK-OUT LOGIC */
@@ -150,13 +158,14 @@ function renderTable(){
  const tb=document.querySelector("tbody");
  const data=getFiltered();
  tb.innerHTML="";
- if(!data.length){ tb.innerHTML=`<tr><td colspan="5">No data</td></tr>`; return;}
+ if(!data.length){ tb.innerHTML=`<tr><td colspan="6">No data</td></tr>`; return;}
  data.forEach(r=>{
  tb.innerHTML+=`
  <tr>
  <td>${r.uid}</td>
  <td>${userMap[r.user_id]}</td>
  <td>${r.date}</td>
+ <td>${getDayName(r.date)}</td>
  <td class="in">${r.checkIn?formatTime(r.checkIn):"--"}</td>
  <td class="out">${r.checkOut?formatTime(r.checkOut):"--"}</td>
  </tr>`;
@@ -182,12 +191,13 @@ function downloadPDF(){
   r.uid,
   userMap[r.user_id],
   r.date,
+  getDayName(r.date),
   r.checkIn?formatTime(r.checkIn):"--",
   r.checkOut?formatTime(r.checkOut):"--"
  ]);
 
  doc.autoTable({
-  head:[['UID','Name','Date','Check-in','Check-out']],
+  head:[['UID','Name','Date','Day','Check-in','Check-out']],
   body:rows,
   startY:20
  });
@@ -212,6 +222,7 @@ function downloadExcel(){
   UID:r.uid,
   Name:userMap[r.user_id],
   Date:r.date,
+  Day:getDayName(r.date),
   "Check-in":r.checkIn?formatTime(r.checkIn):"--",
   "Check-out":r.checkOut?formatTime(r.checkOut):"--"
  }));
