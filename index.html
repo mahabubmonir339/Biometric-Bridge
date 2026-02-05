@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Attendance</title>
+    <!-- PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             margin: 20px;
         }
+
         h2 {
             text-align: center;
             color: #333;
@@ -22,6 +31,7 @@
             gap: 8px;
             margin-bottom: 15px;
         }
+
         .tab {
             padding: 8px 15px;
             background: #ddd;
@@ -29,6 +39,7 @@
             cursor: pointer;
             font-weight: bold;
         }
+
         .tab.active {
             background: #007BFF;
             color: #fff;
@@ -39,165 +50,269 @@
             margin: auto;
             border-collapse: collapse;
             background-color: #fff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        th, td {
+
+        th,
+        td {
             padding: 12px 15px;
             border: 1px solid #ddd;
             text-align: center;
         }
+
         th {
             background-color: #007BFF;
             color: white;
         }
+
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
         tr:hover {
             background-color: #f1f1f1;
         }
 
-        .in { color: green; font-weight: bold; }
-        .out { color: red; font-weight: bold; }
+        .in {
+            color: green;
+            font-weight: bold;
+        }
+
+        .out {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
 
-<h2>Attendance Logs</h2>
+    <h2>Retail Solution Attendance Logs</h2>
+    <div style="text-align:center; margin-bottom:15px;">
+        <button onclick="downloadPDF()">Download PDF</button>
+        <button onclick="downloadExcel()">Download Excel</button>
+    </div>
 
-<!-- USER TABS -->
-<div class="tabs" id="userTabs"></div>
+    <!-- USER TABS -->
+    <div class="tabs" id="userTabs"></div>
 
-<table id="attendance-table">
-    <thead>
-        <tr>
-            <th>UID</th>
-            <th>Name</th>
-            <th>Time</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr><td colspan="4">Loading...</td></tr>
-    </tbody>
-</table>
+    <table id="attendance-table">
+        <thead>
+            <tr>
+                <th>UID</th>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="4">Loading...</td>
+            </tr>
+        </tbody>
+    </table>
 
-<script>
-/* USER LIST */
-const userMap = {
-    "1": "MR Shuvo",
-    "2": "MR Faruque",
-    "3": "MR Fahim",
-    "4": "MR Monir",
-    "5": "MR Saiful",
-    "6": "MRS Israt",
-    "7": "Mrs Tonni"
-};
+    <script>
+        /* USER LIST */
+        const userMap = {
+            "1": "MR Shuvo",
+            "2": "MR Faruque",
+            "3": "MR Fahim",
+            "4": "MR Monir",
+            "5": "MR Saiful",
+            "6": "MRS Israt",
+            "7": "Mrs Tonni"
+        };
 
-let allData = [];
-let activeUser = "all";
+        let allData = [];
+        let activeUser = "all";
 
-/* STATUS BY TIME */
-function getStatusByTime(timeString) {
-    const time = new Date(timeString);
-    const hour = time.getHours();
+        /* STATUS BY TIME */
+        function getStatusByTime(timeString) {
+            const time = new Date(timeString);
+            const hour = time.getHours();
 
-    if (hour >= 13) {
-        return { text: "Check-out", class: "out" };
-    } else {
-        return { text: "Check-in", class: "in" };
-    }
-}
+            if (hour >= 13) {
+                return { text: "Check-out", class: "out" };
+            } else {
+                return { text: "Check-in", class: "in" };
+            }
+        }
 
-/* LOAD JSON */
-async function loadJSON() {
-    try {
-        const res = await fetch('attendance.json');
-        allData = await res.json();
-        renderTable();
-    } catch (err) {
-        document.querySelector('#attendance-table tbody').innerHTML =
-            `<tr><td colspan="4">Error loading JSON</td></tr>`;
-        console.error(err);
-    }
-}
+        /* LOAD JSON */
+        async function loadJSON() {
+            try {
+                const res = await fetch('attendance.json');
+                allData = await res.json();
+                renderTable();
+            } catch (err) {
+                document.querySelector('#attendance-table tbody').innerHTML =
+                    `<tr><td colspan="4">Error loading JSON</td></tr>`;
+                console.error(err);
+            }
+        }
 
-/* CREATE TABS */
-function createTabs() {
-    const tabsDiv = document.getElementById('userTabs');
-    tabsDiv.innerHTML = '';
+        /* CREATE TABS */
+        function createTabs() {
+            const tabsDiv = document.getElementById('userTabs');
+            tabsDiv.innerHTML = '';
 
-    // All tab
-    tabsDiv.innerHTML += `
+            // All tab
+            tabsDiv.innerHTML += `
         <div class="tab active" onclick="switchUser('all')">All</div>
     `;
 
-    for (const id in userMap) {
-        tabsDiv.innerHTML += `
+            for (const id in userMap) {
+                tabsDiv.innerHTML += `
             <div class="tab" onclick="switchUser('${id}')">
                 ${userMap[id]}
             </div>
         `;
-    }
-}
+            }
+        }
 
-/* SWITCH USER */
-function switchUser(userId) {
-    activeUser = userId;
+        /* SWITCH USER */
+        function switchUser(userId) {
+            activeUser = userId;
 
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    event.target.classList.add('active');
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
 
-    renderTable();
-}
+            renderTable();
+        }
 
-/* RENDER TABLE */
-function renderTable() {
-    const tbody = document.querySelector('#attendance-table tbody');
-    tbody.innerHTML = '';
+        /* RENDER TABLE */
+        function renderTable() {
+            const tbody = document.querySelector('#attendance-table tbody');
+            tbody.innerHTML = '';
 
-    let data = allData;
-    if (activeUser !== "all") {
-        data = allData.filter(item => item.user_id === activeUser);
-    }
+            let data = allData;
+            if (activeUser !== "all") {
+                data = allData.filter(item => item.user_id === activeUser);
+            }
 
-    if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4">No records found</td></tr>`;
-        return;
-    }
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4">No records found</td></tr>`;
+                return;
+            }
 
-    data.forEach(item => {
-        const time = new Date(item.time);
-        const formattedTime = time.toLocaleString('en-US', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        });
+            data.forEach(item => {
+                const time = new Date(item.time);
+                const formattedTime = time.toLocaleString('en-US', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
 
-        const status = getStatusByTime(item.time);
+                const status = getStatusByTime(item.time);
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
             <td>${item.uid}</td>
             <td>${userMap[item.user_id] || 'Unknown'}</td>
             <td>${formattedTime}</td>
             <td class="${status.class}">${status.text}</td>
         `;
-        tbody.appendChild(tr);
-    });
-}
+                tbody.appendChild(tr);
+            });
+        }
 
-/* INIT */
-createTabs();
-loadJSON();
-setInterval(loadJSON, 5000);
-</script>
+
+
+        /* GET FILTERED DATA (TAB WISE) */
+        function getFilteredData() {
+            if (activeUser === "all") return allData;
+            return allData.filter(item => item.user_id === activeUser);
+        }
+
+        /* FORMAT TIME FOR EXPORT */
+        function formatTime(timeString) {
+            return new Date(timeString).toLocaleString('en-US', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+        }
+
+        /* ================= PDF DOWNLOAD ================= */
+        function downloadPDF() {
+            const data = getFilteredData();
+            if (data.length === 0) {
+                alert("No data to export");
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const title = activeUser === "all"
+                ? "All Users Attendance"
+                : userMap[activeUser] + " Attendance";
+
+            doc.text(title, 14, 15);
+
+            const tableData = data.map(item => {
+                return [
+                    item.uid,
+                    userMap[item.user_id],
+                    formatTime(item.time),
+                    getStatusByTime(item.time).text
+                ];
+            });
+
+            doc.autoTable({
+                head: [['UID', 'Name', 'Time', 'Status']],
+                body: tableData,
+                startY: 20
+            });
+
+            doc.save(title.replaceAll(" ", "_") + ".pdf");
+        }
+
+        /* ================= EXCEL DOWNLOAD ================= */
+        function downloadExcel() {
+            const data = getFilteredData();
+            if (data.length === 0) {
+                alert("No data to export");
+                return;
+            }
+
+            const excelData = data.map(item => ({
+                UID: item.uid,
+                Name: userMap[item.user_id],
+                Time: formatTime(item.time),
+                Status: getStatusByTime(item.time).text
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
+
+            const fileName = activeUser === "all"
+                ? "All_Users_Attendance.xlsx"
+                : userMap[activeUser].replaceAll(" ", "_") + "_Attendance.xlsx";
+
+            XLSX.writeFile(workbook, fileName);
+        }
+
+
+
+        /* INIT */
+        createTabs();
+        loadJSON();
+        setInterval(loadJSON, 5000);
+    </script>
 
 </body>
+
 </html>
