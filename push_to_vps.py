@@ -1,14 +1,23 @@
-import requests, json
-from fetch_attendance import data
-from config import VPS_API, API_KEY
+import json
+import requests
 
-r = requests.post(
-    VPS_API,
-    json={
-        "token": API_KEY,
-        "attendance": data
-    },
-    timeout=10
-)
+# API = "http://138.252.198.160/hrm_api/attendance_push.php"
+API = "http://mahabub.tfpreview.top/hrm_api/attendance_push.php"
+TOKEN = "MY_SECRET_TOKEN"
 
-print(r.text)
+with open("attendance_processed.json", "r") as f:
+    data = json.load(f)
+
+headers = {
+    "Authorization": f"Bearer {TOKEN}",
+    "Content-Type": "application/json"
+}
+
+res = requests.post(API, json=data, headers=headers, timeout=20)
+
+print("Status Code:", res.status_code)
+print("Response:", res.text)
+headers = {
+    "Authorization": "Bearer MY_SECRET_TOKEN",
+    "Content-Type": "application/json"
+}
