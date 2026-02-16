@@ -2,56 +2,56 @@
     {
         "user_id": "2",
         "date": "2025-12-29",
-        "check_in": "23:24:03",
+        "check_in": null,
         "check_out": "23:24:03"
     },
     {
         "user_id": "1",
         "date": "2025-12-29",
-        "check_in": "23:24:29",
+        "check_in": null,
         "check_out": "23:24:29"
     },
     {
         "user_id": "3",
         "date": "2025-12-30",
         "check_in": "11:30:36",
-        "check_out": "11:30:36"
+        "check_out": null
     },
     {
         "user_id": "1",
         "date": "2025-12-30",
         "check_in": "11:34:30",
-        "check_out": "11:34:30"
+        "check_out": null
     },
     {
         "user_id": "7",
         "date": "2025-12-30",
         "check_in": "11:45:37",
-        "check_out": "11:45:37"
+        "check_out": null
     },
     {
         "user_id": "4",
         "date": "2025-12-30",
         "check_in": "11:47:26",
-        "check_out": "11:47:26"
+        "check_out": null
     },
     {
         "user_id": "5",
         "date": "2025-12-30",
         "check_in": "11:47:30",
-        "check_out": "11:47:30"
+        "check_out": null
     },
     {
         "user_id": "6",
         "date": "2025-12-30",
         "check_in": "11:48:58",
-        "check_out": "11:48:58"
+        "check_out": null
     },
     {
         "user_id": "3",
         "date": "2025-12-31",
         "check_in": "12:03:29",
-        "check_out": "12:03:29"
+        "check_out": null
     },
     {
         "user_id": "5",
@@ -69,7 +69,7 @@
         "user_id": "6",
         "date": "2026-01-01",
         "check_in": "10:28:44",
-        "check_out": "10:28:44"
+        "check_out": null
     },
     {
         "user_id": "7",
@@ -81,7 +81,7 @@
         "user_id": "2",
         "date": "2026-01-01",
         "check_in": "11:09:06",
-        "check_out": "11:09:06"
+        "check_out": null
     },
     {
         "user_id": "7",
@@ -111,7 +111,7 @@
         "user_id": "3",
         "date": "2026-01-03",
         "check_in": "10:15:42",
-        "check_out": "10:15:42"
+        "check_out": null
     },
     {
         "user_id": "1",
@@ -122,26 +122,26 @@
     {
         "user_id": "4",
         "date": "2026-01-03",
-        "check_in": "14:14:25",
+        "check_in": null,
         "check_out": "18:51:39"
     },
     {
         "user_id": "9",
         "date": "2026-01-03",
-        "check_in": "17:26:22",
+        "check_in": null,
         "check_out": "18:56:51"
     },
     {
         "user_id": "8",
         "date": "2026-01-03",
-        "check_in": "17:26:29",
+        "check_in": null,
         "check_out": "17:39:25"
     },
     {
         "user_id": "8",
         "date": "2026-01-04",
         "check_in": "09:32:23",
-        "check_out": "09:32:23"
+        "check_out": null
     },
     {
         "user_id": "9",
@@ -165,7 +165,7 @@
         "user_id": "7",
         "date": "2026-01-04",
         "check_in": "10:02:15",
-        "check_out": "10:02:15"
+        "check_out": null
     },
     {
         "user_id": "5",
@@ -188,7 +188,7 @@
     {
         "user_id": "2",
         "date": "2026-01-04",
-        "check_in": "14:48:44",
+        "check_in": null,
         "check_out": "18:50:12"
     },
     {
@@ -201,7 +201,7 @@
         "user_id": "3",
         "date": "2026-01-05",
         "check_in": "09:55:52",
-        "check_out": "09:55:52"
+        "check_out": null
     },
     {
         "user_id": "7",
@@ -243,7 +243,7 @@
         "user_id": "9",
         "date": "2026-01-06",
         "check_in": "09:36:37",
-        "check_out": "09:36:37"
+        "check_out": null
     },
     {
         "user_id": "5",
@@ -267,7 +267,7 @@
         "user_id": "1",
         "date": "2026-01-06",
         "check_in": "10:03:57",
-        "check_out": "10:03:57"
+        "check_out": null
     },
     {
         "user_id": "7",
@@ -285,7 +285,7 @@
         "user_id": "9",
         "date": "2026-01-07",
         "check_in": "09:34:56",
-        "check_out": "09:34:56"
+        "check_out": null
     },
     {
         "user_id": "7",
@@ -303,7 +303,7 @@
         "user_id": "4",
         "date": "2026-01-07",
         "check_in": "10:02:56",
-        "check_out": "10:02:57"
+        "check_out": null
     },
     {
         "user_id": "3",
@@ -326,14 +326,14 @@
     {
         "user_id": "1",
         "date": "2026-01-07",
-        "check_in": "15:56:21",
+        "check_in": null,
         "check_out": "15:56:21"
     },
     {
         "user_id": "9",
         "date": "2026-01-08",
         "check_in": "09:25:37",
-        "check_out": "09:25:37"
+        "check_out": null
     },
     {
         "user_id": "7",
@@ -345,7 +345,7 @@
         "user_id": "4",
         "date": "2026-01-08",
         "check_in": "09:52:07",
-        "check_out": "09:52:07"
+        "check_out": null
     },
     {
         "user_id": "6",
@@ -399,7 +399,7 @@
         "user_id": "2",
         "date": "2026-01-11",
         "check_in": "10:39:40",
-        "check_out": "10:39:40"
+        "check_out": null
     },
     {
         "user_id": "3",
@@ -410,7 +410,7 @@
     {
         "user_id": "1",
         "date": "2026-01-11",
-        "check_in": "18:52:33",
+        "check_in": null,
         "check_out": "18:52:33"
     },
     {
@@ -446,7 +446,7 @@
     {
         "user_id": "3",
         "date": "2026-01-12",
-        "check_in": "19:20:49",
+        "check_in": null,
         "check_out": "19:20:49"
     },
     {
@@ -459,7 +459,7 @@
         "user_id": "1",
         "date": "2026-01-13",
         "check_in": "10:02:58",
-        "check_out": "10:02:58"
+        "check_out": null
     },
     {
         "user_id": "4",
@@ -483,7 +483,7 @@
         "user_id": "2",
         "date": "2026-01-13",
         "check_in": "11:55:30",
-        "check_out": "11:55:30"
+        "check_out": null
     },
     {
         "user_id": "7",
@@ -507,18 +507,18 @@
         "user_id": "1",
         "date": "2026-01-14",
         "check_in": "10:28:17",
-        "check_out": "10:28:17"
+        "check_out": null
     },
     {
         "user_id": "3",
         "date": "2026-01-14",
-        "check_in": "15:49:16",
+        "check_in": null,
         "check_out": "17:01:01"
     },
     {
         "user_id": "6",
         "date": "2026-01-14",
-        "check_in": "18:35:30",
+        "check_in": null,
         "check_out": "18:35:30"
     },
     {
@@ -531,7 +531,7 @@
         "user_id": "4",
         "date": "2026-01-15",
         "check_in": "10:01:28",
-        "check_out": "10:01:28"
+        "check_out": null
     },
     {
         "user_id": "6",
@@ -561,7 +561,7 @@
         "user_id": "2",
         "date": "2026-01-15",
         "check_in": "10:43:05",
-        "check_out": "10:43:05"
+        "check_out": null
     },
     {
         "user_id": "1",
@@ -590,7 +590,7 @@
     {
         "user_id": "4",
         "date": "2026-01-17",
-        "check_in": "18:50:28",
+        "check_in": null,
         "check_out": "18:50:32"
     },
     {
@@ -663,7 +663,7 @@
         "user_id": "4",
         "date": "2026-01-20",
         "check_in": "10:09:52",
-        "check_out": "10:09:52"
+        "check_out": null
     },
     {
         "user_id": "5",
@@ -698,7 +698,7 @@
     {
         "user_id": "1",
         "date": "2026-01-21",
-        "check_in": "18:39:54",
+        "check_in": null,
         "check_out": "18:39:54"
     },
     {
@@ -735,13 +735,13 @@
         "user_id": "2",
         "date": "2026-01-22",
         "check_in": "10:27:37",
-        "check_out": "10:27:37"
+        "check_out": null
     },
     {
         "user_id": "1",
         "date": "2026-01-23",
         "check_in": "11:15:48",
-        "check_out": "11:15:48"
+        "check_out": null
     },
     {
         "user_id": "1",
@@ -806,13 +806,13 @@
     {
         "user_id": "2",
         "date": "2026-01-25",
-        "check_in": "17:10:38",
+        "check_in": null,
         "check_out": "17:10:38"
     },
     {
         "user_id": "5",
         "date": "2026-01-25",
-        "check_in": "18:52:53",
+        "check_in": null,
         "check_out": "18:52:54"
     },
     {
@@ -843,7 +843,7 @@
         "user_id": "4",
         "date": "2026-01-26",
         "check_in": "10:10:44",
-        "check_out": "10:10:44"
+        "check_out": null
     },
     {
         "user_id": "3",
@@ -854,7 +854,7 @@
     {
         "user_id": "2",
         "date": "2026-01-26",
-        "check_in": "19:00:15",
+        "check_in": null,
         "check_out": "19:00:15"
     },
     {
@@ -921,7 +921,7 @@
         "user_id": "3",
         "date": "2026-01-28",
         "check_in": "10:22:10",
-        "check_out": "10:22:10"
+        "check_out": null
     },
     {
         "user_id": "5",
@@ -969,7 +969,7 @@
         "user_id": "4",
         "date": "2026-01-31",
         "check_in": "10:12:22",
-        "check_out": "10:12:22"
+        "check_out": null
     },
     {
         "user_id": "1",
@@ -987,19 +987,19 @@
         "user_id": "5",
         "date": "2026-01-31",
         "check_in": "10:24:03",
-        "check_out": "10:24:03"
+        "check_out": null
     },
     {
         "user_id": "2",
         "date": "2026-01-31",
-        "check_in": "18:41:31",
+        "check_in": null,
         "check_out": "18:41:31"
     },
     {
         "user_id": "5",
         "date": "2026-02-01",
         "check_in": "10:05:32",
-        "check_out": "10:05:32"
+        "check_out": null
     },
     {
         "user_id": "4",
@@ -1034,7 +1034,7 @@
     {
         "user_id": "3",
         "date": "2026-02-01",
-        "check_in": "16:01:05",
+        "check_in": null,
         "check_out": "20:32:22"
     },
     {
@@ -1047,7 +1047,7 @@
         "user_id": "4",
         "date": "2026-02-02",
         "check_in": "10:10:45",
-        "check_out": "10:10:45"
+        "check_out": null
     },
     {
         "user_id": "6",
@@ -1070,7 +1070,7 @@
     {
         "user_id": "3",
         "date": "2026-02-02",
-        "check_in": "15:58:23",
+        "check_in": null,
         "check_out": "19:47:37"
     },
     {
@@ -1083,7 +1083,7 @@
         "user_id": "5",
         "date": "2026-02-03",
         "check_in": "10:08:15",
-        "check_out": "10:08:15"
+        "check_out": null
     },
     {
         "user_id": "1",
@@ -1107,12 +1107,12 @@
         "user_id": "2",
         "date": "2026-02-03",
         "check_in": "10:59:38",
-        "check_out": "10:59:38"
+        "check_out": null
     },
     {
         "user_id": "1",
         "date": "2026-02-04",
-        "check_in": "16:41:40",
+        "check_in": null,
         "check_out": "16:41:44"
     },
     {
@@ -1137,7 +1137,7 @@
         "user_id": "5",
         "date": "2026-02-05",
         "check_in": "10:10:56",
-        "check_out": "10:10:56"
+        "check_out": null
     },
     {
         "user_id": "1",
@@ -1209,7 +1209,7 @@
         "user_id": "4",
         "date": "2026-02-08",
         "check_in": "10:09:11",
-        "check_out": "10:09:15"
+        "check_out": null
     },
     {
         "user_id": "5",
@@ -1233,18 +1233,18 @@
         "user_id": "2",
         "date": "2026-02-08",
         "check_in": "10:31:50",
-        "check_out": "10:31:50"
+        "check_out": null
     },
     {
         "user_id": "10",
         "date": "2026-02-08",
-        "check_in": "16:11:06",
+        "check_in": null,
         "check_out": "19:11:49"
     },
     {
         "user_id": "9",
         "date": "2026-02-08",
-        "check_in": "16:17:35",
+        "check_in": null,
         "check_out": "19:39:12"
     },
     {
@@ -1292,19 +1292,19 @@
     {
         "user_id": "3",
         "date": "2026-02-09",
-        "check_in": "15:31:19",
+        "check_in": null,
         "check_out": "16:46:10"
     },
     {
         "user_id": "2",
         "date": "2026-02-09",
-        "check_in": "15:31:23",
+        "check_in": null,
         "check_out": "19:24:53"
     },
     {
         "user_id": "8",
         "date": "2026-02-09",
-        "check_in": "19:02:33",
+        "check_in": null,
         "check_out": "19:05:56"
     },
     {
@@ -1341,7 +1341,7 @@
         "user_id": "5",
         "date": "2026-02-10",
         "check_in": "10:22:32",
-        "check_out": "10:22:32"
+        "check_out": null
     },
     {
         "user_id": "4",
@@ -1364,7 +1364,7 @@
     {
         "user_id": "8",
         "date": "2026-02-10",
-        "check_in": "18:43:37",
+        "check_in": null,
         "check_out": "18:43:37"
     },
     {
@@ -1412,7 +1412,7 @@
     {
         "user_id": "6",
         "date": "2026-02-14",
-        "check_in": "18:41:51",
+        "check_in": null,
         "check_out": "18:41:51"
     },
     {
@@ -1431,7 +1431,7 @@
         "user_id": "9",
         "date": "2026-02-15",
         "check_in": "09:51:39",
-        "check_out": "09:51:39"
+        "check_out": null
     },
     {
         "user_id": "7",
@@ -1472,61 +1472,61 @@
     {
         "user_id": "3",
         "date": "2026-02-15",
-        "check_in": "15:46:03",
+        "check_in": null,
         "check_out": "15:46:03"
     },
     {
         "user_id": "8",
         "date": "2026-02-16",
         "check_in": "09:20:35",
-        "check_out": "09:20:35"
+        "check_out": null
     },
     {
         "user_id": "10",
         "date": "2026-02-16",
         "check_in": "09:47:55",
-        "check_out": "09:47:55"
+        "check_out": null
     },
     {
         "user_id": "7",
         "date": "2026-02-16",
         "check_in": "09:59:37",
-        "check_out": "09:59:38"
+        "check_out": null
     },
     {
         "user_id": "1",
         "date": "2026-02-16",
         "check_in": "10:03:37",
-        "check_out": "10:03:37"
+        "check_out": null
     },
     {
         "user_id": "3",
         "date": "2026-02-16",
         "check_in": "10:04:50",
-        "check_out": "10:04:50"
+        "check_out": "14:40:21"
     },
     {
         "user_id": "4",
         "date": "2026-02-16",
         "check_in": "10:07:11",
-        "check_out": "10:07:11"
+        "check_out": "15:43:36"
     },
     {
         "user_id": "9",
         "date": "2026-02-16",
         "check_in": "10:07:54",
-        "check_out": "10:08:03"
+        "check_out": null
     },
     {
         "user_id": "5",
         "date": "2026-02-16",
         "check_in": "10:09:46",
-        "check_out": "10:09:47"
+        "check_out": null
     },
     {
         "user_id": "6",
         "date": "2026-02-16",
         "check_in": "10:11:14",
-        "check_out": "10:11:14"
+        "check_out": null
     }
 ]
