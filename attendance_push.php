@@ -6,9 +6,9 @@ header("Content-Type: application/json");
 
 /* ========= DATABASE ========= */
 $db_host = "localhost";
-$db_user = "mahabub_1_mahabub"; 
+$db_user = "hrm_reta1_hrm"; 
 $db_pass = "@Mahabub12345";
-$db_name = "mahabub_1_hrm"; 
+$db_name = "hrm_reta1_hrm"; 
 
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 if ($conn->connect_error) {
@@ -26,16 +26,16 @@ if ($authHeader !== 'Bearer MY_SECRET_TOKEN') {
 
 /* ========= CUSTOM USER MAPPING ========= */
 $userMapping = [
-    "1"  => "RS0001",
-    "2"  => "RS0002",
-    "3"  => "RS0003",
-    "4"  => "RS0004",
-    "5"  => "RS0005",
-    "6"  => "RS0006",
-    "7"  => "RS0007",
-    "8"  => "RS0008",
-    "9"  => "RS0009",
-    "10" => "RS0010"
+    "1"  => "RS0003",
+    "2"  => "RS0001",
+    "3"  => "RS0002",
+    "4"  => "RS0009",
+    "5"  => "RS0004",
+    "6"  => "RS0010",
+    "7"  => "RS0005",
+    "8"  => "RS0007",
+    "9"  => "RS0011",
+    "10" => "RS0008"
 ];
 
 /* ========= READ JSON ========= */
@@ -177,6 +177,4 @@ echo json_encode([
 $conn->close();
 ?>
 
-
-
-<!-- orangehrm file folder a bosbe ei code -->
+<!-- only orange site folder a file create kore upload korte hobe -->
