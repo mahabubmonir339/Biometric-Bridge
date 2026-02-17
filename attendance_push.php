@@ -3,21 +3,15 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 header("Content-Type: application/json");
-
-/* ========= DATABASE ========= */
-$db_host = "localhost";
-$db_user = "hrm_reta1_hrm"; 
-$db_pass = "@Mahabub12345";
-$db_name = "hrm_reta1_hrm"; 
-
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
-if ($conn->connect_error) {
-    echo json_encode(["status" => "db_error", "error" => $conn->connect_error]);
-    exit;
-}
+date_default_timezone_set('Asia/Dhaka');
 
 /* ========= AUTH CHECK ========= */
 $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+if (empty($authHeader) && function_exists('getallheaders')) {
+    $headers = getallheaders();
+    $authHeader = $headers['Authorization'] ?? '';
+}
+
 if ($authHeader !== 'Bearer MY_SECRET_TOKEN') {
     http_response_code(401);
     echo json_encode(["status" => "unauthorized"]);
@@ -38,6 +32,18 @@ $userMapping = [
     "10" => "RS0008"
 ];
 
+/* ========= DATABASE ========= */
+$db_host = "localhost";
+$db_user = "hrm_reta1_hrm"; 
+$db_pass = "@Mahabub12345";
+$db_name = "hrm_reta1_hrm"; 
+
+$conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+if ($conn->connect_error) {
+    echo json_encode(["status" => "db_error", "error" => $conn->connect_error]);
+    exit;
+}
+
 /* ========= READ JSON ========= */
 $input = file_get_contents("php://input");
 $rows = json_decode($input, true);
@@ -54,65 +60,79 @@ $db_errors = [];
 
 foreach ($rows as $r) {
 
-    $jsonUserId = $r['user_id'] ?? null;
-    $date       = $r['date'] ?? null;
-    $checkIn    = $r['check_in'] ?? null;
-    $checkOut   = $r['check_out'] ?? null;
+    $deviceUserId = $r['user_id'];
+    $date         = $conn->real_escape_string($r['date']);
+    $checkIn      = $r['check_in']  ?? null;
+    $checkOut     = $r['check_out'] ?? null;
 
-    if (!$jsonUserId || !$date) {
+    if (!isset($userMapping[$deviceUserId])) {
         $skipped++;
         continue;
     }
 
-    if (!isset($userMapping[$jsonUserId])) {
+    $customEmployeeId = $userMapping[$deviceUserId];
+
+    $empResult = $conn->query("SELECT emp_number FROM hs_hr_employee WHERE employee_id = '$customEmployeeId'");
+    if (!$empResult || $empResult->num_rows == 0) {
         $skipped++;
         continue;
     }
 
-    $customEmployeeId = $userMapping[$jsonUserId];
+    $empRow = $empResult->fetch_assoc();
+    $empNumber = $empRow['emp_number'];
 
-    /* ===== GET emp_number ===== */
-    $empQuery = $conn->query("
-        SELECT emp_number 
-        FROM hs_hr_employee 
-        WHERE employee_id = '$customEmployeeId'
-        LIMIT 1
-    ");
+    /* ========= BUILD DATETIME ========= */
 
-    if (!$empQuery || $empQuery->num_rows == 0) {
-        $skipped++;
-        continue;
+    $checkInDateTime  = !empty($checkIn)  ? "$date $checkIn"  : null;
+    $checkOutDateTime = !empty($checkOut) ? "$date $checkOut" : null;
+
+    $checkInUTC  = null;
+    $checkOutUTC = null;
+
+    if ($checkInDateTime) {
+        $dt = new DateTime($checkInDateTime, new DateTimeZone('Asia/Dhaka'));
+        $dt->setTimezone(new DateTimeZone('UTC'));
+        $checkInUTC = $dt->format('Y-m-d H:i:s');
     }
 
-    $empNumber = $empQuery->fetch_assoc()['emp_number'];
+    if ($checkOutDateTime) {
+        $dt2 = new DateTime($checkOutDateTime, new DateTimeZone('Asia/Dhaka'));
+        $dt2->setTimezone(new DateTimeZone('UTC'));
+        $checkOutUTC = $dt2->format('Y-m-d H:i:s');
+    }
 
-    $startDateTime = $date . " 00:00:00";
-    $endDateTime   = $date . " 23:59:59";
+    // validation: punch_out must be later than punch_in
+    if ($checkInUTC && $checkOutUTC) {
+        if (strtotime($checkOutUTC) <= strtotime($checkInUTC)) {
+            $db_errors[] = "Punch out earlier than punch in for $customEmployeeId ($date)";
+            continue;
+        }
+    }
 
-    /* ===== CHECK EXISTING RECORD ===== */
+    $checkInUserSQL   = $checkInDateTime  ? "'$checkInDateTime'"  : "NULL";
+    $checkOutUserSQL  = $checkOutDateTime ? "'$checkOutDateTime'" : "NULL";
+    $checkInUTCSQL    = $checkInUTC  ? "'$checkInUTC'"  : "NULL";
+    $checkOutUTCSQL   = $checkOutUTC ? "'$checkOutUTC'" : "NULL";
+
+    /* ========= EXISTING CHECK ========= */
+
     $existing = $conn->query("
-        SELECT id, punch_out_user_time
-        FROM ohrm_attendance_record
+        SELECT id FROM ohrm_attendance_record
         WHERE employee_id = $empNumber
-        AND punch_in_user_time BETWEEN '$startDateTime' AND '$endDateTime'
-        LIMIT 1
+        AND DATE(punch_in_user_time) = '$date'
     ");
 
-    $checkInDateTime  = $checkIn  ? $date . " " . $checkIn  : null;
-    $checkOutDateTime = $checkOut ? $date . " " . $checkOut : null;
-
-    /* ===============================
-       IF RECORD EXISTS → UPDATE
-    ================================*/
     if ($existing && $existing->num_rows > 0) {
 
         $row = $existing->fetch_assoc();
 
-        if ($checkOutDateTime) {
+        if (!empty($checkOutUTC)) {
 
             $updateSql = "
                 UPDATE ohrm_attendance_record
-                SET punch_out_user_time = '$checkOutDateTime',
+                SET 
+                    punch_out_user_time = $checkOutUserSQL,
+                    punch_out_utc_time  = $checkOutUTCSQL,
                     punch_out_time_offset = '6',
                     punch_out_timezone_name = 'Asia/Dhaka',
                     state = 'PUNCHED OUT'
@@ -129,52 +149,56 @@ foreach ($rows as $r) {
             $skipped++;
         }
 
-    }
-    /* ===============================
-       NO RECORD → INSERT
-    ================================*/
-    else {
+    } else {
 
-        if ($checkInDateTime) {
-
-            $insertSql = "
-                INSERT INTO ohrm_attendance_record
-                (employee_id,
-                 punch_in_user_time,
-                 punch_in_time_offset,
-                 punch_in_timezone_name,
-                 state)
-                VALUES
-                ($empNumber,
-                 '$checkInDateTime',
-                 '6',
-                 'Asia/Dhaka',
-                 'PUNCHED IN')
-            ";
-
-            if ($conn->query($insertSql)) {
-                $inserted++;
-            } else {
-                $db_errors[] = $conn->error;
-            }
-
-        } else {
+        if (empty($checkInUTC)) {
             $skipped++;
+            continue;
+        }
+
+        $stateValue = $checkOutUTC ? 'PUNCHED OUT' : 'PUNCHED IN';
+
+        $insertSql = "
+            INSERT INTO ohrm_attendance_record
+            (employee_id,
+             punch_in_user_time,
+             punch_in_utc_time,
+             punch_in_time_offset,
+             punch_in_timezone_name,
+             punch_out_user_time,
+             punch_out_utc_time,
+             punch_out_time_offset,
+             punch_out_timezone_name,
+             state)
+            VALUES
+            ($empNumber,
+             $checkInUserSQL,
+             $checkInUTCSQL,
+             '6',
+             'Asia/Dhaka',
+             $checkOutUserSQL,
+             $checkOutUTCSQL,
+             '6',
+             'Asia/Dhaka',
+             '$stateValue')
+        ";
+
+        if ($conn->query($insertSql)) {
+            $inserted++;
+        } else {
+            $db_errors[] = $conn->error;
         }
     }
 }
 
-/* ========= RESPONSE ========= */
 echo json_encode([
-    "status"   => "completed",
-    "received" => count($rows),
-    "inserted" => $inserted,
-    "updated"  => $updated,
-    "skipped"  => $skipped,
-    "errors"   => $db_errors
+    "status"    => "completed",
+    "received"  => count($rows),
+    "inserted"  => $inserted,
+    "updated"   => $updated,
+    "skipped"   => $skipped,
+    "db_errors" => $db_errors
 ]);
 
 $conn->close();
 ?>
-
-<!-- only orange site folder a file create kore upload korte hobe -->
